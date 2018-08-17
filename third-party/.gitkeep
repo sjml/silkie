@@ -1,0 +1,1 @@
+During the build process, third-party libraries want a prefix to install their bin/include/lib/share directories. To prevent pollution of the system directories, they treat this as their home.
