@@ -9,12 +9,13 @@ export MK_JOBS := 4
 ifeq ($(shell uname),Darwin)
     export CC := clang
     export CXX := clang++
+    RANLIB := ranlib -c
 else
     export CC := gcc
     export CXX := g++
+    RANLIB := ranlib
 endif
 AR := ar rcu
-RANLIB := ranlib
 
 export MACOSX_DEPLOYMENT_TARGET = 10.13
 export SDKROOT = /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.13.sdk
@@ -117,20 +118,64 @@ $(INTERMEDIATE_DIR)/%.n.d.o: $(SRC_DIR)/%.c
 	@mkdir -p $(INTERMEDIATE_DIR)
 	$(CC) -c $(CFLAGS) -DSILKIE_OFFSCREEN=0 $(SILKIE_DEBUG_FLAGS) -I$(BASE_DIR)/src/lib -I$(PREFIX)/include -o $@ $^
 
+
+SILKIE_OFFSCREEN_LIBS = $(MESA_LIB) $(shell $(PREFIX)/bin/llvm-config --libfiles engine)
+SILKIE_ONSCREEN_LIBS = $(GLFW_LIB)
+
 $(BUILT_DIR)/libSilkie.a: $(MESA_LIB) $(SILKIE_OBJS)
+ifeq ($(shell uname),Darwin)
 	$(AR) $@ $(SILKIE_OBJS)
+	libtool -static -o $@ $@ $(SILKIE_OFFSCREEN_LIBS)
+else
+	echo "CREATE $@" > $(INTERMEDIATE_DIR)/$(@F)r
+	for deplib in $(SILKIE_OFFSCREEN_LIBS); do (echo "ADDLIB $$deplib" >> $(INTERMEDIATE_DIR)/$(@F)r); done
+	for objfile in $(SILKIE_OBJS); do (echo "ADDMOD $$objfile" >> $(INTERMEDIATE_DIR)/$(@F)r); done
+	echo "SAVE" >> $(INTERMEDIATE_DIR)/$(@F)r
+	echo "END" >> $(INTERMEDIATE_DIR)/$(@F)r
+	$(AR) -M < $(INTERMEDIATE_DIR)/$(@F)r
+endif
 	$(RANLIB) $@
 
 $(BUILT_DIR)/libSilkieN.a: $(GLFW_LIB) $(SILKIE_NOBJS)
+ifeq ($(shell uname),Darwin)
 	$(AR) $@ $(SILKIE_NOBJS)
+	libtool -static -o $@ $@ $(SILKIE_ONSCREEN_LIBS)
+else
+	echo "CREATE $@" > $(INTERMEDIATE_DIR)/$(@F)r
+	for deplib in $(SILKIE_ONSCREEN_LIBS); do (echo "ADDLIB $$deplib" >> $(INTERMEDIATE_DIR)/$(@F)r); done
+	for objfile in $(SILKIE_NOBJS); do (echo "ADDMOD $$objfile" >> $(INTERMEDIATE_DIR)/$(@F)r); done
+	echo "SAVE" >> $(INTERMEDIATE_DIR)/$(@F)r
+	echo "END" >> $(INTERMEDIATE_DIR)/$(@F)r
+	$(AR) -M < $(INTERMEDIATE_DIR)/$(@F)r
+endif
 	$(RANLIB) $@
 
 $(BUILT_DIR)/libSilkie-Debug.a: $(MESA_LIB) $(SILKIE_DOBJS)
+ifeq ($(shell uname),Darwin)
 	$(AR) $@ $(SILKIE_DOBJS)
+	libtool -static -o $@ $@ $(SILKIE_OFFSCREEN_LIBS)
+else
+	echo "CREATE $@" > $(INTERMEDIATE_DIR)/$(@F)r
+	for deplib in $(SILKIE_OFFSCREEN_LIBS); do (echo "ADDLIB $$deplib" >> $(INTERMEDIATE_DIR)/$(@F)r); done
+	for objfile in $(SILKIE_DOBJS); do (echo "ADDMOD $$objfile" >> $(INTERMEDIATE_DIR)/$(@F)r); done
+	echo "SAVE" >> $(INTERMEDIATE_DIR)/$(@F)r
+	echo "END" >> $(INTERMEDIATE_DIR)/$(@F)r
+	$(AR) -M < $(INTERMEDIATE_DIR)/$(@F)r
+endif
 	$(RANLIB) $@
 
 $(BUILT_DIR)/libSilkieN-Debug.a: $(GLFW_LIB) $(SILKIE_NDOBJS)
+ifeq ($(shell uname),Darwin)
 	$(AR) $@ $(SILKIE_NDOBJS)
+	libtool -static -o $@ $@ $(SILKIE_ONSCREEN_LIBS)
+else
+	echo "CREATE $@" > $(INTERMEDIATE_DIR)/$(@F)r
+	for deplib in $(SILKIE_ONSCREEN_LIBS); do (echo "ADDLIB $$deplib" >> $(INTERMEDIATE_DIR)/$(@F)r); done
+	for objfile in $(SILKIE_NDOBJS); do (echo "ADDMOD $$objfile" >> $(INTERMEDIATE_DIR)/$(@F)r); done
+	echo "SAVE" >> $(INTERMEDIATE_DIR)/$(@F)r
+	echo "END" >> $(INTERMEDIATE_DIR)/$(@F)r
+	$(AR) -M < $(INTERMEDIATE_DIR)/$(@F)r
+endif
 	$(RANLIB) $@
 
 
