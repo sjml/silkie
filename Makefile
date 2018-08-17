@@ -60,8 +60,9 @@ LLVM-clean-build:
 
 
 MESA_LIB = $(LIB_DIR)/libOSMesa32.a
-$(MESA_LIB): $(LLVM_LIB)
-	$(BASE_DIR)/build-scripts/build_osmesa.sh $(MESA_VERSION)
+$(MESA_LIB): $(LLVM_LIB) $(ZLIB_LIB)
+	PKG_CONFIG_PATH=$(PREFIX)/lib/pkgconfig $(BASE_DIR)/build-scripts/build_osmesa.sh $(MESA_VERSION)
+
 
 .PHONY: OSMesa OSMesa-clean-build
 OSMesa: $(MESA_LIB)

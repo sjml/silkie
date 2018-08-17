@@ -18,17 +18,20 @@ if [ ! -f llvm-$1.src.tar.xz ]; then
   fi
 fi
 
-tar -xzf llvm-$1.src.tar.xz
+xzcat llvm-$1.src.tar.xz | tar xf -
 cd llvm-$1.src
-mkdir build
+mkdir -p build
 cd build
 
-REQUIRES_RTTI=1 cmake \
+if [ `uname` == 'Darwin' ]; then
+  config_options="-DCMAKE_OSX_ARCHITECTURES=x86_64 -DCMAKE_OSX_DEPLOYMENT_TARGET=$MACOSX_DEPLOYMENT_TARGET -DCMAKE_OSX_SYSROOT=$SDKROOT "
+else
+  config_options=""
+fi
+
+REQUIRES_RTTI=1 cmake $config_options \
   -G "Unix Makefiles" .. \
   -DLLVM_ENABLE_LIBCXX=ON \
-  -DCMAKE_OSX_ARCHITECTURES=x86_64 \
-  -DCMAKE_OSX_DEPLOYMENT_TARGET=$MACOSX_DEPLOYMENT_TARGET \
-  -DCMAKE_OSX_SYSROOT=$SDKROOT \
   -DCMAKE_C_COMPILER="$CC" \
   -DCMAKE_CXX_COMPILER="$CXX" \
   -DCMAKE_INSTALL_PREFIX=$PREFIX \
@@ -47,5 +50,6 @@ REQUIRES_RTTI=1 cmake \
   -DCMAKE_BUILD_TYPE=Release \
   -DLLVM_ENABLE_ASSERTIONS=OFF \
   -DLLVM_INCLUDE_EXAMPLES=OFF
+
 
 make -j$MK_JOBS; make install

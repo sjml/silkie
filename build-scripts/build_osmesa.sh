@@ -38,6 +38,7 @@ sed -i.bak -e 's/MANGLE/MANGLE_disabled/' $BUILD_SCRIPT_DIR/../libzips/mesa-$1/s
 
 cd $BUILD_SCRIPT_DIR/../libzips/mesa-$1
 
+
 autoreconf -fi
 ./configure \
   --disable-dependency-tracking \
@@ -73,6 +74,10 @@ autoreconf -fi
   CXX="$CXX" CXXFLAGS="$CXXFLAGS"
 
 make -j$MK_JOBS; make install
-for f in $PREFIX/lib/libOSMesa*.a; do
-  ranlib -c "$f"
-done
+
+if [ `uname` == 'Darwin' ]; then
+  for f in $PREFIX/lib/libOSMesa*.a; do
+    ranlib -c "$f"
+  done
+fi
+

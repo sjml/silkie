@@ -19,7 +19,7 @@ if [ ! -f glu-$1.tar.bz2 ]; then
   fi
 fi
 
-tar -xzf glu-$1.tar.bz2
+tar -xjf glu-$1.tar.bz2
 
 cd glu-$1
 
