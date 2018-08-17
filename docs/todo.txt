@@ -1,9 +1,5 @@
 Makefile:
     - make silkie a dependency of examples
-    - can static libSilkie contain glfw et al?
-        - libtool -static -o new.a old1.a old2.a
-            - OR -
-        - libtool --mode=link cc -static -o libaz.la libabc.la libxyz.la
 
 can we just use an unsigned char buffer instead of converting each frame from float in OSMesa?
     - while looking at the buffer, drop the alpha

@@ -63,7 +63,6 @@ MESA_LIB = $(LIB_DIR)/libOSMesa32.a
 $(MESA_LIB): $(LLVM_LIB) $(ZLIB_LIB)
 	PKG_CONFIG_PATH=$(PREFIX)/lib/pkgconfig $(BASE_DIR)/build-scripts/build_osmesa.sh $(MESA_VERSION)
 
-
 .PHONY: OSMesa OSMesa-clean-build
 OSMesa: $(MESA_LIB)
 OSMesa-clean-build:
@@ -118,7 +117,7 @@ $(INTERMEDIATE_DIR)/%.n.d.o: $(SRC_DIR)/%.c
 	@mkdir -p $(INTERMEDIATE_DIR)
 	$(CC) -c $(CFLAGS) -DSILKIE_OFFSCREEN=0 $(SILKIE_DEBUG_FLAGS) -I$(BASE_DIR)/src/lib -I$(PREFIX)/include -o $@ $^
 
-$(BUILT_DIR)/libSilkie.a: $(MESA_LIB) $(LIBPNG_LIB) $(SILKIE_OBJS)
+$(BUILT_DIR)/libSilkie.a: $(MESA_LIB) $(SILKIE_OBJS)
 	$(AR) $@ $(SILKIE_OBJS)
 	$(RANLIB) $@
 
@@ -126,7 +125,7 @@ $(BUILT_DIR)/libSilkieN.a: $(GLFW_LIB) $(SILKIE_NOBJS)
 	$(AR) $@ $(SILKIE_NOBJS)
 	$(RANLIB) $@
 
-$(BUILT_DIR)/libSilkie-Debug.a: $(MESA_LIB) $(LIBPNG_LIB) $(SILKIE_DOBJS)
+$(BUILT_DIR)/libSilkie-Debug.a: $(MESA_LIB) $(SILKIE_DOBJS)
 	$(AR) $@ $(SILKIE_DOBJS)
 	$(RANLIB) $@
 

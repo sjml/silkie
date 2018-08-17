@@ -20,8 +20,8 @@ endif
 
 LLVM_LIB_LIST = $(shell $(PREFIX)/bin/llvm-config --ldflags --libs --system-libs --libs engine)
 
-SILKIE_OFFSCREEN_LIBS_RELEASE = -lSilkie -lOSMesa32 -lz -lpng $(LLVM_LIB_LIST)
-SILKIE_OFFSCREEN_LIBS_DEBUG = -lSilkie-Debug -lOSMesa32 -lz -lpng $(LLVM_LIB_LIST)
+SILKIE_OFFSCREEN_LIBS_RELEASE = -lSilkie -lOSMesa32 $(LLVM_LIB_LIST)
+SILKIE_OFFSCREEN_LIBS_DEBUG = -lSilkie-Debug -lOSMesa32 $(LLVM_LIB_LIST)
 SILKIE_ONSCREEN_LIBS_RELEASE = -lSilkieN -lglfw3
 SILKIE_ONSCREEN_LIBS_DEBUG = -lSilkieN-Debug -lglfw3
 SILKIE_OFFSCREEN_CFLAGS_RELEASE = -DSILKIE_OFFSCREEN=1 -O3
