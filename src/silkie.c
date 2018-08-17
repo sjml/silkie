@@ -242,6 +242,7 @@ int silkie_run(void* ctx, const char* output_location, int framerate) {
                 stbi_flip_vertically_on_write(1);
                 stbi_write_png_compression_level = 8; //default = 8
                 stbi_write_png(filename, (*sctx).width, (*sctx).height, 3, out_buffer, (*sctx).width * 3);
+                free(out_buffer);
             #else
                 glfwSwapBuffers((GLFWwindow*)ctx);
                 glfwPollEvents();
