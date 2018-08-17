@@ -17,7 +17,7 @@
 #if SILKIE_OFFSCREEN
     typedef struct {
         OSMesaContext ctx;
-        GLfloat* buffer;
+        GLubyte* buffer;
         int width;
         int height;
     } _silkie_context;
@@ -52,7 +52,7 @@ void* silkie_get_context(int width, int height, int oglMajorVersion, int oglMino
         }
 
         const int attribs[] = {
-            OSMESA_FORMAT, OSMESA_RGBA,
+            OSMESA_FORMAT, OSMESA_RGBA, // <sigh> OSMesa doesn't do RGB ubyte
             OSMESA_DEPTH_BITS, 32,
             OSMESA_STENCIL_BITS, 0,
             OSMESA_ACCUM_BITS, 0,
@@ -67,14 +67,14 @@ void* silkie_get_context(int width, int height, int oglMajorVersion, int oglMino
             return NULL;
         }
 
-        (*sc).buffer = (GLfloat *) malloc( (*sc).width * (*sc).height * 4 * sizeof(GLfloat));
+        (*sc).buffer = (GLubyte *) malloc( (*sc).width * (*sc).height * 4 * sizeof(GLubyte));
         if (!(*sc).buffer) {
             OSMesaDestroyContext((*sc).ctx);
             free(sc);
             return NULL;
         }
 
-        if (!OSMesaMakeCurrent((*sc).ctx, (*sc).buffer, GL_FLOAT, (*sc).width, (*sc).height)) {
+        if (!OSMesaMakeCurrent((*sc).ctx, (*sc).buffer, GL_UNSIGNED_BYTE, (*sc).width, (*sc).height)) {
             OSMesaDestroyContext((*sc).ctx);
             free((*sc).buffer);
             free(sc);
@@ -202,7 +202,7 @@ int silkie_run(void* ctx, const char* output_location, int framerate) {
         #endif
 
         #if SILKIE_OFFSCREEN
-            OSMesaMakeCurrent((*sctx).ctx, (*sctx).buffer, GL_FLOAT, (*sctx).width, (*sctx).height);
+            OSMesaMakeCurrent((*sctx).ctx, (*sctx).buffer, GL_UNSIGNED_BYTE, (*sctx).width, (*sctx).height);
         #else
             glfwMakeContextCurrent((GLFWwindow*)ctx);
         #endif
@@ -217,32 +217,9 @@ int silkie_run(void* ctx, const char* output_location, int framerate) {
                 char filename[PATH_MAX];
                 snprintf(filename, PATH_MAX, "%s%llu.png", out, frameCounter++);
 
-                uint8_t *out_buffer = malloc(sizeof(uint8_t) * (*sctx).width * (*sctx).height * 3);
-                if (out_buffer == NULL) {
-                    fprintf(stderr, "ERROR: Could not allocate output buffer.\n");
-                    break;
-                }
-                const GLfloat *ptr = (*sctx).buffer;
-                for (unsigned int y = 0; y < (*sctx).height; y++) {
-                    for (unsigned int x = 0; x < (*sctx).width; x++) {
-                        uint8_t r, g, b;
-                        unsigned int idx = y * (*sctx).width + x;
-                        r = (uint8_t) (ptr[(idx*4) + 0] * 255.0f);
-                        g = (uint8_t) (ptr[(idx*4) + 1] * 255.0f);
-                        b = (uint8_t) (ptr[(idx*4) + 2] * 255.0f);
-                        if (r > 255) r = 255;
-                        if (g > 255) g = 255;
-                        if (b > 255) b = 255;
-                        out_buffer[(idx*3) + 0] = r;
-                        out_buffer[(idx*3) + 1] = g;
-                        out_buffer[(idx*3) + 2] = b;
-                    }
-                }
-
                 stbi_flip_vertically_on_write(1);
                 stbi_write_png_compression_level = 8; //default = 8
-                stbi_write_png(filename, (*sctx).width, (*sctx).height, 3, out_buffer, (*sctx).width * 3);
-                free(out_buffer);
+                stbi_write_png(filename, (*sctx).width, (*sctx).height, 4, (*sctx).buffer, (*sctx).width * 4);
             #else
                 glfwSwapBuffers((GLFWwindow*)ctx);
                 glfwPollEvents();
