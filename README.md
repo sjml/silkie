@@ -105,7 +105,7 @@ If you link against libSilkieN instead of libSilkie (AND define `SILKIE_OFFSCREE
 Some of 'em. It does what I need it to do, for now. To do more might take some code tweaks. The code for Silkie itself is tiny and easily modifiable; for the most part I made this for the sake of recording how to build and link OSMesa. If there are easy changes to Silkie that would let it support something you want it to do, lemme know. 
 
 ### Can it output video? 
-It's pretty trivial to stitch the image sequence together with [FFMpeg](http://www.ffmpeg.org/) or the like, and I'd rather just do that than try and integrate yet another huge library. 
+It's pretty trivial to stitch the image sequence together with [FFmpeg](http://www.ffmpeg.org/) or the like, and I'd rather just do that than try and integrate yet another huge library. 
 
 Here is a pretty good starting point that uses YouTube's recommended settings, assuming an output of 60fps:
 
