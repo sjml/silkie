@@ -17,8 +17,8 @@ else
 endif
 AR := ar rcu
 
-export MACOSX_DEPLOYMENT_TARGET = 10.13
-export SDKROOT = /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.13.sdk
+export MACOSX_DEPLOYMENT_TARGET = 10.14
+export SDKROOT = /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX$(MACOSX_DEPLOYMENT_TARGET).sdk
 export OSX_FLAGS = -arch x86_64 -mmacosx-version-min=$(MACOSX_DEPLOYMENT_TARGET) -isysroot $(SDKROOT)
 
 export CFLAGS = -O3
