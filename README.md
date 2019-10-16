@@ -2,7 +2,7 @@
 
 ![Animated gif](examples/demos/advanced.gif)
 
-(This GIF doesn't quite do it justice. Check out [the full 60fps glory](https://gfycat.com/gifs/detail/felinelineardragonfly). A humble scene, to be sure, but this was rendered completely in software on a headless server.)
+(This GIF doesn't quite do it justice. Check out [the full 60fps glory](https://youtu.be/FTQR54kOMtc). A humble scene, to be sure, but this was rendered completely in software on a headless server.)
 
 ---
 
